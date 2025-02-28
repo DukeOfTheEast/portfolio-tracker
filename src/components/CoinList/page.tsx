@@ -1,4 +1,5 @@
 import { Coin } from "@/types/crypto";
+import { Edit, X } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
@@ -63,7 +64,7 @@ export default function CoinList({
 
   return (
     <>
-      <ul style={{ listStyle: "none", padding: 0 }}>
+      <ul className="list-none p-0 sm:w-[80%] mx-auto my-6">
         {coins.length > 0 ? (
           coins.map((coin) => {
             const progress = coin.progress || 0;
@@ -75,38 +76,33 @@ export default function CoinList({
               <li
                 key={coin.id}
                 onClick={() => onCoinClick?.(coin)}
-                style={{
-                  padding: "10px",
-                  margin: "5px 0",
-                  // background: "#f0f0f0",
-                  borderRadius: "4px",
-                  cursor: onCoinClick ? "pointer" : "default",
-                  display: "flex",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
+                className={`p-3 my-1 mx-0 rounded border-b-2 flex justify-between flex-wrap ${
+                  onCoinClick ? "cursor-pointer" : "cursor-default"
+                }`}
               >
-                <Image
-                  src={coin.image}
-                  alt={`${coin.name} logo`}
-                  width={32}
-                  height={32}
-                  style={{ marginRight: "10px" }}
-                />
-                <div style={{ flex: 1, minWidth: "200px" }}>
-                  <strong>{coin.name}</strong> ({coin.symbol})<br />
-                  {showExtraInfo && (
-                    <div>
-                      <p style={{ margin: "5px 0 0", color: "#666" }}>
-                        Price: ${coin.price}
-                      </p>
-                      <p>Total: ${Number(progress) * coin.price}</p>
-                    </div>
-                  )}
+                <div className="flex">
+                  <Image
+                    src={coin.image}
+                    alt={`${coin.name} logo`}
+                    width={100}
+                    height={100}
+                    className="mr-2 w-10 h-10"
+                  />
+                  <div style={{ flex: 1, minWidth: "200px" }}>
+                    <strong>{coin.name}</strong> ({coin.symbol})<br />
+                    {showExtraInfo && (
+                      <div>
+                        <p style={{ margin: "5px 0 0", color: "#666" }}>
+                          Price: ${coin.price}
+                        </p>
+                        <p>Total: ${Number(progress) * coin.price}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 min-w-52">
+                <div className="flex gap-3 w-full sm:w-1/3">
                   {showExtraInfo && (
-                    <div className="w-40">
+                    <div className="w-full">
                       <div className="bg-slate-300 h-3 rounded-md overflow-hidden">
                         <div
                           style={{
@@ -128,16 +124,9 @@ export default function CoinList({
                         e.stopPropagation();
                         handleEditClick(coin);
                       }}
-                      style={{
-                        padding: "4px 8px",
-                        background: "#007bff",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
+                      className="cursor-pointer"
                     >
-                      Edit
+                      <Edit size={25} />
                     </button>
                   )}
                   {onDeleteCoin && (
@@ -146,9 +135,9 @@ export default function CoinList({
                         e.stopPropagation();
                         onDeleteCoin(coin.id);
                       }}
-                      className="text-red-800"
+                      className=""
                     >
-                      <p className="text-xl">x</p>
+                      <X size={25} />
                     </button>
                   )}
                 </div>
