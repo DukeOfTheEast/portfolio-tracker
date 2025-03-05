@@ -129,7 +129,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="fixed top-0 right-0 left-0 px-7 py-4 flex items-center justify-between bg-teal-950 border-b-2 border-b-green-200 shadow-black z-50">
+    <div className="fixed top-0 right-0 left-0 sm:px-7 px-3 py-4 flex items-center justify-between bg-teal-950 border-b-2 border-b-green-200 shadow-black z-50">
       <div className="flex items-center gap-1 text-green-600">
         <Wallet size={25} />
         <p className="font-bold text-xl">Wallet</p>
@@ -318,7 +318,11 @@ const Navbar = () => {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={loading}>
+                  <Button
+                    className="bg-teal-700"
+                    type="submit"
+                    disabled={loading}
+                  >
                     {loading ? "Signing up..." : "Submit"}
                   </Button>
                   {error && <p className="text-red-500">{error}</p>}
@@ -394,7 +398,11 @@ const Navbar = () => {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" disabled={loading}>
+                  <Button
+                    className="bg-teal-700"
+                    type="submit"
+                    disabled={loading}
+                  >
                     {loading ? "Logging in..." : "Submit"}
                   </Button>
                   {error && <p className="text-red-500">{error}</p>}

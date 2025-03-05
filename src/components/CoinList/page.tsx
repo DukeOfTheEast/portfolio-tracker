@@ -23,6 +23,7 @@ export default function CoinList({
   const [editCoin, setEditCoin] = useState<Coin | null>(null);
   const [progressInput, setProgressInput] = useState("");
   const [desiredInput, setDesiredInput] = useState("");
+  // const [info, setInfo] = useState<boolean>(false);
 
   // Calculate total sum of progress * price for all coins
   const totalSum = coins.reduce((sum, coin) => {
@@ -64,7 +65,7 @@ export default function CoinList({
 
   return (
     <>
-      <ul className="list-none p-0 sm:w-[80%] mx-auto my-6">
+      <ul className="list-none p-0 sm:w-[80%] mx-auto ">
         {coins.length > 0 ? (
           coins.map((coin) => {
             const progress = coin.progress || 0;
@@ -76,7 +77,7 @@ export default function CoinList({
               <li
                 key={coin.id}
                 onClick={() => onCoinClick?.(coin)}
-                className={`p-3 my-1 mx-0 rounded border-b-2 flex justify-between flex-wrap ${
+                className={`p-3 my-1 sm:mx-0 mx-4 bg-green-200 rounded border-b-2 flex justify-between flex-wrap ${
                   onCoinClick ? "cursor-pointer" : "cursor-default"
                 }`}
               >
@@ -95,12 +96,14 @@ export default function CoinList({
                         <p style={{ margin: "5px 0 0", color: "#666" }}>
                           Price: ${coin.price}
                         </p>
-                        <p>Total: ${Number(progress) * coin.price}</p>
+                        <p className="">
+                          Total: ${Number(progress) * coin.price}
+                        </p>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex gap-3 w-full sm:w-1/3">
+                <div className=" gap-3 w-full sm:w-1/3">
                   {showExtraInfo && (
                     <div className="w-full">
                       <div className="bg-slate-300 h-3 rounded-md overflow-hidden">
@@ -145,7 +148,9 @@ export default function CoinList({
             );
           })
         ) : (
-          <li>No results</li>
+          <li className="bg-teal-950 text-white text-center">
+            There is nothing on your portfolio yet...
+          </li>
         )}
       </ul>
 

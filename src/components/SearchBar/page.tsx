@@ -97,35 +97,39 @@ export default function SearchBar({ onCoinClick }: SearchBarProps) {
 
   return (
     <div className="relative mb-5">
-      <form onSubmit={handleSearch}>
+      <form
+        onSubmit={handleSearch}
+        className="sm:mx-5 mx-2 rounded-full bg-green-200 inline-block "
+      >
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name or contract address"
-          style={{
-            padding: "8px",
-            width: "70%",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-          }}
+          className="p-2 sm:w-[400px] rounded-full focus:outline-none bg-green-200"
         />
-        <button type="submit">Search</button>
+        <button
+          className="bg-teal-950 text-white p-2 rounded-full text-sm m-1"
+          type="submit"
+        >
+          Search
+        </button>
       </form>
       {localResults.length > 0 && (
         <div
+          className="sm:mx-5 mx-2"
           style={{
             position: "absolute",
-            top: "100%", // Position below input
+            top: "100%",
             left: 0,
-            width: "70%", // Match input width
-            maxHeight: "200px", // Limit height
-            overflowY: "auto", // Scroll if too many results
+            // width: "50%",
+            maxHeight: "200px",
+            overflowY: "auto",
             background: "white",
             border: "1px solid #ccc",
             borderRadius: "4px",
             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            zIndex: 10, // Ensure it’s above other content
+            zIndex: 10,
           }}
         >
           <CoinList

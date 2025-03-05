@@ -10,7 +10,7 @@ import Sidebar from "@/components/Sidebar/page";
 export default function Home() {
   const [trackedCoins, setTrackedCoins] = useState<Coin[]>([]);
   const [totalValue, setTotalValue] = useState<number>(0);
-  // const [searchResults, setSearchResults] = useState<Coin[]>([]);
+  const [currency, setCurrency] = useState<string>("usd");
 
   const handleCoinClick = (coin: Coin) => {
     if (!trackedCoins.some((tracked) => tracked.id === coin.id)) {
@@ -35,22 +35,51 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-teal-950 h-full">
+    <div className="bg-teal-950 h-full overflow-y-hidden">
       <Navbar />
       <Sidebar />
-      <div className="ml-64 mt-16">
-        <h1 className="text-green-300 px-10 py-7 text-3xl font-bold">
-          Crypto Tracker
-        </h1>
+      <div className="sm:ml-64 mt-16">
+        <div className="flex items-center justify-between">
+          <h1 className="text-green-300 sm:px-10 px-3 py-7 sm:text-3xl text-2xl font-bold">
+            Crypto Tracker
+          </h1>
+          <div className="m-3 flex gap-2 text-sm bg-green-300 rounded-md p-1 text-white">
+            <button
+              onClick={() => {
+                setCurrency("usd");
+              }}
+              className={`${
+                currency === "usd" ? "bg-teal-950" : ""
+              } p-1 rounded-md`}
+            >
+              USD
+            </button>
+            <button
+              className={`${
+                currency === "NGN" ? "bg-teal-950" : ""
+              } p-1 rounded-md`}
+              onClick={() => setCurrency("NGN")}
+            >
+              NGN
+            </button>
+          </div>
+        </div>
         <SearchBar onCoinClick={handleCoinClick} />
         <div>
-          <div style={{ marginTop: "20px" }}>
-            <h3 className="text-green-300 text-2xl font-bold px-10 py-5">
-              Total: ${totalValue}
+          <div className="mt-5">
+            <h3 className="text-green-300 text-2xl font-bold sm:px-10 px-3 py-5">
+              Total: {currency === "usd" ? "$" : "NGN"}
+              {currency === "usd"
+                ? Number(totalValue.toFixed(2)).toLocaleString()
+                : Number((totalValue * 1500).toFixed(2)).toLocaleString()}
             </h3>
+
+            <hr className="w-[90%] mx-auto" />
           </div>
-          <div className="mb-20" style={{ flex: 1 }}>
-            <h2>Tracked Coins</h2>
+          <div className="mb-20">
+            <h2 className="text-green-300 text-xl font-bold sm:px-10 px-3 py-5">
+              Tracked Coins
+            </h2>
             <CoinList
               coins={trackedCoins}
               showExtraInfo
