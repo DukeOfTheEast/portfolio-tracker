@@ -201,7 +201,7 @@ const Navbar = () => {
         <div className="flex gap-2">
           <Dialog>
             <DialogTrigger>
-              <p className="px-4 py-2 border border-green-600 bg-white text-green-600 rounded-md text-sm">
+              <p className="sm:px-4 px-2 py-1 sm:py-2 border border-green-600 bg-white text-green-600 rounded-md text-sm">
                 Sign Up
               </p>
             </DialogTrigger>
@@ -332,7 +332,7 @@ const Navbar = () => {
           </Dialog>
           <Dialog>
             <DialogTrigger asChild>
-              <p className="px-4 py-2 bg-green-600 text-white rounded-md text-sm cursor-pointer">
+              <p className="sm:px-4 px-2 py-1 sm:py-2 bg-green-600 text-white rounded-md text-sm cursor-pointer">
                 Login
               </p>
             </DialogTrigger>

@@ -1,25 +1,88 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import SearchBar from "@/components/SearchBar/page";
 import CoinList from "@/components/CoinList/page";
 import { Coin } from "@/types/crypto";
 import Navbar from "@/components/Navbar/page";
 import Sidebar from "@/components/Sidebar/page";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db } from "@/app/firebase/firebase-config";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 export default function Home() {
   const [trackedCoins, setTrackedCoins] = useState<Coin[]>([]);
   const [totalValue, setTotalValue] = useState<number>(0);
   const [currency, setCurrency] = useState<string>("usd");
+  const [user, loading] = useAuthState(auth);
+  // const [userCoins, setUserCoins] = useState<Coin[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  // Function to load user coins from Firestore
+  const loadUserCoins = useCallback(async () => {
+    if (!user) {
+      setTrackedCoins([]);
+      // setIsLoading(false);
+      return;
+    }
+
+    // setIsLoading(true);
+    try {
+      console.log("Loading user coins for:", user.uid);
+      const q = query(
+        collection(db, "user_coins"),
+        where("userId", "==", user.uid)
+      );
+
+      const snapshot = await getDocs(q);
+      const coins = snapshot.docs.map((doc) => doc.data().coin as Coin);
+      console.log("Loaded user coins:", coins);
+      setTrackedCoins(coins);
+    } catch (error) {
+      console.error("Error loading user coins:", error);
+      setTrackedCoins([]);
+    } finally {
+      // setIsLoading(false);
+    }
+  }, [user]);
+
+  // Load coins when user auth state changes
+  useEffect(() => {
+    if (!loading) {
+      loadUserCoins();
+    }
+  }, [loading, loadUserCoins]);
 
   const handleCoinClick = (coin: Coin) => {
     if (!trackedCoins.some((tracked) => tracked.id === coin.id)) {
       setTrackedCoins([...trackedCoins, coin]);
     }
+    loadUserCoins();
   };
 
-  const handleDeleteCoin = (coinId: string) => {
-    setTrackedCoins(trackedCoins.filter((coin) => coin.id !== coinId));
+  // const handleDeleteCoin = (coinId: string) => {
+  //   setTrackedCoins(trackedCoins.filter((coin) => coin.id !== coinId));
+  // };
+
+  const handleDeleteCoin = async (coinId: string) => {
+    if (!user) return;
+
+    try {
+      const docRef = doc(db, "user_coins", `${user.uid}_${coinId}`);
+      await deleteDoc(docRef);
+      console.log(`Deleted coin ${coinId}`);
+      // Refresh coins after deletion
+      loadUserCoins();
+    } catch (error) {
+      console.error("Error deleting coin:", error);
+    }
   };
 
   const handleUpdateCoin = (updatedCoin: Coin) => {
@@ -28,6 +91,7 @@ export default function Home() {
         coin.id === updatedCoin.id ? updatedCoin : coin
       )
     );
+    loadUserCoins();
   };
 
   const handleTotalsChange = (total: number) => {
@@ -35,7 +99,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-teal-950 h-full overflow-y-hidden">
+    <div className="">
       <Navbar />
       <Sidebar />
       <div className="sm:ml-64 mt-16">
