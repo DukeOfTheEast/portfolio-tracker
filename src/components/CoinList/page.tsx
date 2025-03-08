@@ -152,7 +152,7 @@ export default function CoinList({
       {isLoading && !propCoins ? (
         <div className="text-center py-4">Loading your portfolio...</div>
       ) : (
-        <ul className="list-none p-0 sm:w-[80%] mx-auto ">
+        <ul className="list-none p-0 sm:w-[80%] mx-auto flex flex-col gap-1 ">
           {coinsToDisplay.length > 0 ? (
             coinsToDisplay.map((coin) => {
               const progress = coin.progress || 0;
@@ -258,14 +258,7 @@ export default function CoinList({
             zIndex: 1000,
           }}
         >
-          <div
-            style={{
-              background: "white",
-              padding: "20px",
-              borderRadius: "8px",
-              width: "300px",
-            }}
-          >
+          <div className="bg-white p-5 rounded-xl w-[300px]">
             {!editCoin.desiredHighestNumber ? (
               <div className="flex flex-col gap-2 mb-3">
                 <input

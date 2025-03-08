@@ -35,7 +35,7 @@ interface CoinMarketData {
 
 interface SearchBarProps {
   onCoinClick: (coin: Coin) => void;
-  refreshUserCoins?: () => void; // New prop to trigger refresh in parent
+  refreshUserCoins?: () => void;
 }
 
 export default function SearchBar({
@@ -57,7 +57,7 @@ export default function SearchBar({
     try {
       setIsSearching(true);
 
-      // Step 1: Fetch search results
+      // Fetch search results
       const searchResponse = await fetch(
         `https://api.coingecko.com/api/v3/search?query=${query}`
       );
@@ -75,7 +75,7 @@ export default function SearchBar({
         return;
       }
 
-      // Step 2: Fetch price data
+      // Fetch price data
       const marketResponse = await fetch(
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}&order=market_cap_desc&per_page=100&page=1&sparkline=false`
       );
@@ -85,7 +85,7 @@ export default function SearchBar({
       const marketData: CoinMarketData[] = await marketResponse.json();
       console.log("Market API Response:", marketData);
 
-      // Step 3: Combine search and market data
+      // Combine search and market data
       const formattedResults: Coin[] = searchData.coins.map((coin) => {
         const marketInfo = marketData.find((m) => m.id === coin.id);
         return {
@@ -107,13 +107,11 @@ export default function SearchBar({
     }
   };
 
-  // This function handles saving a coin to Firestore
   const handleLocalCoinClick = async (coin: Coin) => {
     if (user) {
       try {
         console.log(`Saving coin ${coin.name} for user ${user.uid}`);
 
-        // Check if this coin already exists in the user's collection
         const userCoinsRef = collection(db, "user_coins");
         const q = firestoreQuery(
           userCoinsRef,
@@ -132,9 +130,6 @@ export default function SearchBar({
           address: coin.address || "N/A",
           image: coin.image,
           price: coin.price,
-          // Only initialize these to 0 if the coin doesn't already exist
-          // progress: coinExists ? undefined : 0,
-          // desiredHighestNumber: coinExists ? undefined : 0,
         };
 
         // Create a document reference with a consistent ID format
@@ -148,7 +143,7 @@ export default function SearchBar({
             coinId: coin.id,
             coin: coinData,
             updatedAt: new Date().toISOString(),
-            // Only set createdAt if it's a new document
+
             ...(coinExists ? {} : { createdAt: new Date().toISOString() }),
           },
           { merge: true }
@@ -168,9 +163,9 @@ export default function SearchBar({
       console.log("User not authenticated, coin not saved");
     }
 
-    onCoinClick(coin); // Pass click event to parent
-    setLocalResults([]); // Clear dropdown after selection
-    setQuery(""); // Clear input
+    onCoinClick(coin);
+    setLocalResults([]);
+    setQuery("");
   };
 
   return (
@@ -195,23 +190,7 @@ export default function SearchBar({
         </button>
       </form>
       {localResults.length > 0 && (
-        <div
-          className="sm:mx-5 mx-2"
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            width: "100%",
-            maxWidth: "500px",
-            maxHeight: "300px",
-            overflowY: "auto",
-            background: "white",
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-            zIndex: 10,
-          }}
-        >
+        <div className="sm:mx-5 mx-2 absolute top-[100%] left-0 w-[100%] max-w-[500px] max-h-[300px] overflow-y-auto bg-green-200 border border-slate-100 rounded-xl z-10">
           <CoinList
             coins={localResults}
             onCoinClick={handleLocalCoinClick}
