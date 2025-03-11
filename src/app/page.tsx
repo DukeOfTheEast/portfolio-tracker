@@ -16,6 +16,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+// import { RefreshCw } from "lucide-react";
 
 export default function Home() {
   const [trackedCoins, setTrackedCoins] = useState<Coin[]>([]);
@@ -131,12 +132,15 @@ export default function Home() {
         <SearchBar onCoinClick={handleCoinClick} />
         <div>
           <div className="mt-5">
-            <h3 className="text-green-300 text-2xl font-bold sm:px-10 px-3 py-5">
-              Total: {currency === "usd" ? "$" : "NGN"}
-              {currency === "usd"
-                ? Number(totalValue.toFixed(2)).toLocaleString()
-                : Number((totalValue * 1500).toFixed(2)).toLocaleString()}
-            </h3>
+            <div className="flex items-center gap-1 text-green-300 text-2xl font-bold sm:px-10 px-3 py-5">
+              <h3>
+                Total: {currency === "usd" ? "$" : "NGN"}
+                {currency === "usd"
+                  ? Number(totalValue.toFixed(2)).toLocaleString()
+                  : Number((totalValue * 1550).toFixed(2)).toLocaleString()}
+              </h3>
+              {/* <RefreshCw size={25} className="text-green-300" /> */}
+            </div>
 
             <hr className="w-[90%] mx-auto" />
           </div>

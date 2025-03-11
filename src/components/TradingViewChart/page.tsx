@@ -22,19 +22,6 @@ interface CoinGeckoCoin {
   // Add more fields if needed (e.g., image, market_cap)
 }
 
-// const cryptoPairs = [
-//   { symbol: "BTCUSD", name: "Bitcoin / US Dollar" },
-//   { symbol: "ETHUSD", name: "Ethereum / US Dollar" },
-//   { symbol: "SOLUSD", name: "Solana / US Dollar" },
-//   { symbol: "BNBUSD", name: "Binance Coin / US Dollar" },
-//   { symbol: "AVAXUSD", name: "Avalanche / US Dollar" },
-//   { symbol: "DOTUSD", name: "Polkadot / US Dollar" },
-//   { symbol: "ADAUSD", name: "Cardano / US Dollar" },
-//   { symbol: "MOVEUSD", name: "Movement / US Dollar" },
-//   { symbol: "DOGEUSD", name: "Dogecoin / US Dollar" },
-//   { symbol: "MATICUSD", name: "Polygon / US Dollar" },
-// ];
-
 const TradingViewChart: React.FC<TradingViewChartProps> = ({
   defaultSymbol = "BTCUSD",
   theme = "light",

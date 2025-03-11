@@ -39,6 +39,10 @@ export default function CoinList({
   const [userCoins, setUserCoins] = useState<Coin[]>([]); // State for Firestore data
   const [user, loading] = useAuthState(auth); // Get authenticated user
   const [isLoading, setIsLoading] = useState(true);
+  const [realTimePrices, setRealTimePrices] = useState<Record<string, number>>(
+    {}
+  );
+  const [priceLoading, setPriceLoading] = useState(false);
 
   // Fetch coins from Firestore for the current user
   useEffect(() => {
@@ -92,10 +96,63 @@ export default function CoinList({
 
   const coinsToDisplay = propCoins || userCoins;
 
+  useEffect(() => {
+    if (coinsToDisplay.length === 0) return;
+
+    const fetchPrices = async () => {
+      setPriceLoading(true);
+      try {
+        // Get the list of coin IDs to fetch
+        const coinIds = coinsToDisplay.map((coin) => coin.id).join(",");
+
+        // Using CoinGecko API (free tier) to fetch real-time prices
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch coin prices");
+        }
+
+        const data = await response.json();
+
+        interface CoinGeckoPriceResponse {
+          [coinId: string]: {
+            usd: number;
+          };
+        }
+
+        // Create a map of coin ID to price
+        const priceMap: Record<string, number> = {};
+        const typedData = data as CoinGeckoPriceResponse;
+
+        for (const [coinId, priceData] of Object.entries(typedData)) {
+          priceMap[coinId] = priceData.usd;
+        }
+
+        setRealTimePrices(priceMap);
+      } catch (error) {
+        console.error("Error fetching real-time prices:", error);
+      } finally {
+        setPriceLoading(false);
+      }
+    };
+
+    // Initial fetch
+    fetchPrices();
+
+    // Set up interval to fetch prices every 60 seconds
+    const intervalId = setInterval(fetchPrices, 60000);
+
+    // Clean up on component unmount
+    return () => clearInterval(intervalId);
+  }, [coinsToDisplay]);
+
   // Calculate total sum of progress * price for all coins
   const totalSum = coinsToDisplay.reduce((sum, coin) => {
     const progress = coin.progress || 0;
-    return sum + progress * coin.price;
+    const price = realTimePrices[coin.id] || coin.price;
+    return sum + progress * price;
   }, 0);
 
   // Notify parent of total sum whenever it changes
@@ -147,6 +204,10 @@ export default function CoinList({
     setEditCoin(null);
   };
 
+  const getCurrentPrice = (coin: Coin) => {
+    return realTimePrices[coin.id] || coin.price;
+  };
+
   return (
     <>
       {isLoading && !propCoins ? (
@@ -159,6 +220,8 @@ export default function CoinList({
               const desired = coin.desiredHighestNumber || 0;
               const progressPercentage =
                 desired > 0 ? Math.min((progress / desired) * 100, 100) : 0;
+              const currentPrice = getCurrentPrice(coin);
+              const isPriceUpdated = realTimePrices[coin.id] !== undefined;
 
               return (
                 <li
@@ -181,10 +244,20 @@ export default function CoinList({
                       {showExtraInfo && (
                         <div>
                           <p style={{ margin: "5px 0 0", color: "#666" }}>
-                            Price: ${coin.price}
+                            Price: ${currentPrice}
+                            {isPriceUpdated && (
+                              <span className="ml-2 text-xs bg-green-500 text-white px-1 py-0.5 rounded">
+                                LIVE
+                              </span>
+                            )}
+                            {priceLoading && !isPriceUpdated && (
+                              <span className="ml-2 text-xs italic">
+                                updating...
+                              </span>
+                            )}
                           </p>
                           <p className="">
-                            Total: ${Number(progress) * coin.price}
+                            Total: ${Number(progress) * currentPrice}
                           </p>
                         </div>
                       )}
