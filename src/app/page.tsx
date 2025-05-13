@@ -137,7 +137,7 @@ export default function Home() {
                 Total: {currency === "usd" ? "$" : "NGN"}
                 {currency === "usd"
                   ? Number(totalValue.toFixed(2)).toLocaleString()
-                  : Number((totalValue * 1550).toFixed(2)).toLocaleString()}
+                  : Number((totalValue * 1580).toFixed(2)).toLocaleString()}
               </h3>
               {/* <RefreshCw size={25} className="text-green-300" /> */}
             </div>
